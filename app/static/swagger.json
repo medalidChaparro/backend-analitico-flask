@@ -11,8 +11,6 @@
     "http"
   ],
   "paths": {
-
-
     "/": {
       "get": {
         "summary": "Verificar estado del Backend",
@@ -24,61 +22,184 @@
         }
       }
     },
-
-
-
-
     "/analytics/sales-total": {
       "get": {
         "summary": "Obtener ventas totales",
-        "description": "Calcula el monto total vendido utilizando información empresarial almacenada en las fuentes de datos configuradas.",
+        "description": "Calcula el monto total vendido utilizando información empresarial almacenada en SQL Server.",
         "tags": [
           "Indicadores Analíticos"
         ],
         "responses": {
-
-
           "200": {
             "description": "Cálculo realizado correctamente",
             "schema": {
               "type": "object",
               "properties": {
-
-
-                "indicator_name": {
+                "indicator": {
                   "type": "string",
-                  "example": "Total Sales"
+                  "example": "sales_total"
                 },
-
-
-                "total_sales": {
+                "title": {
+                  "type": "string",
+                  "example": "Ventas Totales"
+                },
+                "chart_type": {
+                  "type": "string",
+                  "example": "card"
+                },
+                "data": {
                   "type": "number",
-                  "example": 2855530
+                  "example": 5052.00
                 },
-
-
-                "currency": {
-                  "type": "string",
-                  "example": "PEN"
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "SQL Server"
+                  ]
                 }
-
-
               }
             }
           },
-
-
-
-
           "500": {
             "description": "Error interno del servidor"
           }
-
-
+        }
+      }
+    },
+    "/analytics/sales-by-region": {
+      "get": {
+        "summary": "Obtener ventas por región",
+        "description": "Calcula el monto total de ventas agrupado por región.",
+        "tags": [
+          "Indicadores Analíticos"
+        ],
+        "responses": {
+          "200": {
+            "description": "Cálculo realizado correctamente",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "indicator": {
+                  "type": "string",
+                  "example": "sales_by_region"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Ventas por Región"
+                },
+                "chart_type": {
+                  "type": "string",
+                  "example": "bar"
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "region": {
+                        "type": "string",
+                        "example": "Lima"
+                      },
+                      "sales": {
+                        "type": "number",
+                        "example": 1500.00
+                      }
+                    }
+                  }
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "SQL Server"
+                  ]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
+        }
+      }
+    },
+    "/analytics/top-product": {
+      "get": {
+        "summary": "Obtener el producto catalogado con más ventas",
+        "description": "Ordena los productos por unidades vendidas en el mes más reciente con ventas en SQL Server y devuelve el primero que también tiene ficha en la colección products de MongoDB. Si falta la ficha del ganador, prueba el siguiente producto y la respuesta lo identifica como el más vendido con ficha en catálogo. El mes consultado se incluye en la respuesta.",
+        "tags": [
+          "Indicadores Analíticos"
+        ],
+        "responses": {
+          "200": {
+            "description": "Indicador calculado correctamente",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "indicator": {
+                  "type": "string",
+                  "example": "top_product_month"
+                },
+                "title": {
+                  "type": "string",
+                  "example": "Producto con más ventas con ficha en catálogo de 2026-03"
+                },
+                "chart_type": {
+                  "type": "string",
+                  "example": "card"
+                },
+                "data": {
+                  "type": "object",
+                  "properties": {
+                    "product_id": {
+                      "type": "string",
+                      "example": "P004"
+                    },
+                    "product": {
+                      "type": "string",
+                      "example": "Smartphone Samsung 4"
+                    },
+                    "category": {
+                      "type": "string",
+                      "example": "Accessories"
+                    },
+                    "quantity": {
+                      "type": "integer",
+                      "example": 10
+                    },
+                    "month": {
+                      "type": "string",
+                      "description": "Mes consultado en formato AAAA-MM",
+                      "example": "2026-03"
+                    }
+                  }
+                },
+                "sources": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "example": [
+                    "SQL Server",
+                    "MongoDB"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No se encontró información de ventas o del producto"
+          },
+          "500": {
+            "description": "Error interno del servidor"
+          }
         }
       }
     }
-
-
   }
 }
